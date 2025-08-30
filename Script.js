@@ -32,7 +32,7 @@ function calculateXGForShot(distance, angle, shotType, situation, pressure) {
 }
 
 // --- single shot calculator ---
-window.calculateXG = function () {
+document.getElementById("calcXG").addEventListener("click", () => {
   const distance = document.getElementById("distance").value;
   const angle = document.getElementById("angle").value;
   const shotType = document.getElementById("shotType").value;
@@ -41,7 +41,7 @@ window.calculateXG = function () {
 
   const xg = calculateXGForShot(distance, angle, shotType, situation, pressure);
   document.getElementById("xg-result").textContent = xg.toFixed(2);
-};
+});
 
 // --- multi-shot block creator ---
 function createShotInputBlock() {
@@ -49,10 +49,10 @@ function createShotInputBlock() {
   div.className = "shot-input";
   div.innerHTML = `
     <label>Distance (m):</label>
-    <input type="number" class="distance" step="0.1" required>
+    <input type="number" class="distance" step="0.1">
 
     <label>Angle (°):</label>
-    <input type="number" class="angle" step="1" max="180" required>
+    <input type="number" class="angle" step="1" max="180">
 
     <label>Type:</label>
     <select class="shotType">
@@ -78,12 +78,12 @@ function createShotInputBlock() {
 }
 
 // --- add new shot input ---
-window.addShot = function () {
+document.getElementById("addShot").addEventListener("click", () => {
   document.getElementById("shotInputs").appendChild(createShotInputBlock());
-};
+});
 
 // --- calculate total xG ---
-window.calculateTotalXG = function () {
+document.getElementById("calcTotalXG").addEventListener("click", () => {
   const shots = document.querySelectorAll("#shotInputs .shot-input");
   let total = 0;
 
@@ -98,4 +98,4 @@ window.calculateTotalXG = function () {
   });
 
   document.getElementById("total-xg-result").textContent = total.toFixed(2);
-};
+});
