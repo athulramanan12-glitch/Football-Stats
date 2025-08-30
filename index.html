@@ -4,17 +4,22 @@
   <meta charset="UTF-8">
   <title>xG Calculator</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="container">
     <h1>xG Calculator</h1>
 
-    <form id="xgForm">
-      <label for="x">X Position (0–100):</label>
-      <input type="number" id="x" min="0" max="100" required>
+    <p>Click on the pitch to select shot location.</p>
 
-      <label for="y">Y Position (0–100):</label>
-      <input type="number" id="y" min="0" max="100" required>
+    <canvas id="pitch" width="500" height="300"></canvas>
+
+    <form id="xgForm">
+      <label for="x">X Position:</label>
+      <input type="number" id="x" required readonly>
+
+      <label for="y">Y Position:</label>
+      <input type="number" id="y" required readonly>
 
       <label for="bodyPart">Shot Type:</label>
       <select id="bodyPart" required>
@@ -26,7 +31,10 @@
       <button type="submit">Calculate</button>
     </form>
 
-    <p id="result">Enter shot data to calculate xG.</p>
+    <p id="result">Click on the pitch and choose shot type to calculate xG.</p>
+
+    <h2>Shot History</h2>
+    <canvas id="xgChart" width="500" height="300"></canvas>
   </div>
 
   <script src="script.js"></script>
