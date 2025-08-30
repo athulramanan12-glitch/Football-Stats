@@ -2,104 +2,140 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simple xG Calculator</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      max-width: 400px;
-      margin: 40px auto;
-      padding: 10px;
-      background: #f9f9f9;
+      font-family: 'Arial', sans-serif;
+      background-color: #f5f5f5;
       color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #fafafa;
     }
+
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
     label {
       display: block;
-      margin: 12px 0 6px;
+      margin-bottom: 8px;
+      font-size: 16px;
     }
+
     input[type="number"], select {
       width: 100%;
-      padding: 7px;
-      font-size: 1em;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
       box-sizing: border-box;
     }
+
     button {
-      margin-top: 15px;
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       background-color: #007bff;
-      border: none;
       color: white;
-      font-size: 1.1em;
+      font-size: 18px;
+      border: none;
+      border-radius: 4px;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
+
     button:hover {
       background-color: #0056b3;
     }
+
     #result {
-      margin-top: 20px;
+      font-size: 18px;
       font-weight: bold;
+      margin-top: 20px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-  <h1>Simple xG Calculator</h1>
+  <div class="container">
+    <h1>xG Calculator</h1>
 
-  <form id="xgForm">
-    <label for="xPos">X Position (0-100):</label>
-    <input type="number" id="xPos" name="xPos" min="0" max="100" step="1" required />
+    <form id="xgForm">
+      <label for="xPos">X Position (0-100):</label>
+      <input type="number" id="xPos" name="xPos" min="0" max="100" step="1" required />
 
-    <label for="yPos">Y Position (0-100):</label>
-    <input type="number" id="yPos" name="yPos" min="0" max="100" step="1" required />
+      <label for="yPos">Y Position (0-100):</label>
+      <input type="number" id="yPos" name="yPos" min="0" max="100" step="1" required />
 
-    <label for="shotType">Shot Type:</label>
-    <select id="shotType" name="shotType">
-      <option value="foot">Foot</option>
-      <option value="head">Header</option>
-      <option value="other">Other</option>
-    </select>
+      <label for="shotType">Shot Type:</label>
+      <select id="shotType" name="shotType">
+        <option value="foot">Foot</option>
+        <option value="head">Header</option>
+        <option value="other">Other</option>
+      </select>
 
-    <button type="submit">Calculate xG</button>
-  </form>
+      <button type="submit">Calculate xG</button>
+    </form>
 
-  <div id="result"></div>
+    <div id="result"></div>
+  </div>
 
   <script>
-    // Dummy xG calculator function (you can replace this)
+    // Dummy xG calculator function
     function calculateXG(x, y, shotType) {
-      // Simple formula for demonstration:
-      // x and y are from 0-100; closer to (100,50) is better chance
-      
-      // Distance from center of goal line (assumed at x=100, y=50)
+      // Calculate the distance from the center (100, 50) - goal center
       const dx = 100 - x;
       const dy = 50 - y;
-      const distance = Math.sqrt(dx*dx + dy*dy);
+      const distance = Math.sqrt(dx * dx + dy * dy); // Pythagorean theorem
 
-      // Base xG score: closer shots have higher chance, max 0.97
+      // Base xG score (0.97 being the max)
       let baseXG = Math.max(0, 0.97 * (1 - distance / 100));
 
-      // Adjust by shot type
-      let multiplier = 1;
-      if (shotType === 'head') multiplier = 0.7;
-      else if (shotType === 'other') multiplier = 0.4;
+      // Modify based on shot type
+      let typeMultiplier = 1;
+      if (shotType === 'head') typeMultiplier = 0.7;
+      else if (shotType === 'other') typeMultiplier = 0.4;
 
-      return (baseXG * multiplier).toFixed(3);
+      return (baseXG * typeMultiplier).toFixed(3);
     }
 
-    document.getElementById('xgForm').addEventListener('submit', function(e) {
-      e.preventDefault();
+    // Handle form submission
+    document.getElementById('xgForm').addEventListener('submit', function(event) {
+      event.preventDefault();
 
-      const x = Number(document.getElementById('xPos').value);
-      const y = Number(document.getElementById('yPos').value);
+      // Get values from form
+      const x = parseInt(document.getElementById('xPos').value);
+      const y = parseInt(document.getElementById('yPos').value);
       const shotType = document.getElementById('shotType').value;
 
+      // Validation check for X and Y positions
       if (x < 0 || x > 100 || y < 0 || y > 100) {
-        alert('Please enter positions between 0 and 100.');
+        alert('Please enter valid positions between 0 and 100 for X and Y.');
         return;
       }
 
+      // Calculate xG
       const xg = calculateXG(x, y, shotType);
 
+      // Display the result
       document.getElementById('result').textContent = `Estimated xG: ${xg}`;
     });
   </script>
