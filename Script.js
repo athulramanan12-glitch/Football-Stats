@@ -34,7 +34,7 @@ document.getElementById('xgForm').addEventListener('submit', function(event) {
   const defenderPressure = document.getElementById('defenderPressure').value;
 
   // Validate inputs
-  if (distance < 0 || angle < 0 || angle > 180) {
+  if (distance < 0 || angle < 0 || angle > 180 || isNaN(distance) || isNaN(angle)) {
     alert('Please enter valid values for all fields.');
     return;
   }
