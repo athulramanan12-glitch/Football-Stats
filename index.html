@@ -10,11 +10,18 @@
     <h1>xG Calculator</h1>
 
     <form id="xgForm">
-      <label for="distance">Distance (meters):</label>
-      <input type="number" id="distance" step="0.1" required>
+      <label for="x">X Position (0–100):</label>
+      <input type="number" id="x" min="0" max="100" required>
 
-      <label for="angle">Angle (degrees):</label>
-      <input type="number" id="angle" step="0.1" required>
+      <label for="y">Y Position (0–100):</label>
+      <input type="number" id="y" min="0" max="100" required>
+
+      <label for="bodyPart">Shot Type:</label>
+      <select id="bodyPart" required>
+        <option value="foot">Foot</option>
+        <option value="head">Head</option>
+        <option value="other">Other</option>
+      </select>
 
       <button type="submit">Calculate</button>
     </form>
@@ -25,4 +32,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
