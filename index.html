@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>xG Calculator with Pitch</title>
+  <title>Pitch Test</title>
   <style>
     #pitch {
-      border: 1px solid black;
+      border: 2px solid black;
       display: block;
       margin: 20px auto;
       background-color: #4CAF50;
@@ -13,45 +13,44 @@
   </style>
 </head>
 <body>
-  <h1>xG Calculator</h1>
-
   <canvas id="pitch" width="600" height="400"></canvas>
 
-  <!-- Your form and results go here -->
-
   <script>
-    const canvas = document.getElementById('pitch');
-    const ctx = canvas.getContext('2d');
+    window.onload = function() {
+      const canvas = document.getElementById('pitch');
+      if (!canvas.getContext) {
+        alert('Canvas not supported!');
+        return;
+      }
+      const ctx = canvas.getContext('2d');
 
-    function drawPitch() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+      // Draw pitch background
       ctx.fillStyle = '#4CAF50';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+      // Draw outer lines
       ctx.strokeStyle = 'white';
       ctx.lineWidth = 4;
       ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
 
+      // Halfway line
       ctx.beginPath();
       ctx.moveTo(canvas.width / 2, 10);
       ctx.lineTo(canvas.width / 2, canvas.height - 10);
       ctx.stroke();
 
+      // Center circle
       ctx.beginPath();
       ctx.arc(canvas.width / 2, canvas.height / 2, 60, 0, Math.PI * 2);
       ctx.stroke();
 
+      // Penalty areas
       ctx.strokeRect(canvas.width - 150, canvas.height / 2 - 100, 140, 200);
       ctx.strokeRect(10, canvas.height / 2 - 100, 140, 200);
 
+      // Goals
       ctx.strokeRect(canvas.width - 170, canvas.height / 2 - 50, 20, 100);
       ctx.strokeRect(150, canvas.height / 2 - 50, 20, 100);
-    }
-
-    window.onload = () => {
-      drawPitch();
-      // Other initialization code here
     };
   </script>
 </body>
