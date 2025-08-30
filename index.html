@@ -1,42 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>xG Calculator</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8" />
+  <title>xG Calculator with Pitch</title>
+  <style>
+    #pitch {
+      border: 1px solid black;
+      display: block;
+      margin: 20px auto;
+      background-color: #4CAF50;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>xG Calculator</h1>
+  <h1>xG Calculator</h1>
 
-    <p>Click on the pitch to select shot location.</p>
+  <canvas id="pitch" width="600" height="400"></canvas>
 
-    <canvas id="pitch" width="500" height="300"></canvas>
+  <!-- Your form and results go here -->
 
-    <form id="xgForm">
-      <label for="x">X Position:</label>
-      <input type="number" id="x" required readonly>
+  <script>
+    const canvas = document.getElementById('pitch');
+    const ctx = canvas.getContext('2d');
 
-      <label for="y">Y Position:</label>
-      <input type="number" id="y" required readonly>
+    function drawPitch() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      <label for="bodyPart">Shot Type:</label>
-      <select id="bodyPart" required>
-        <option value="foot">Foot</option>
-        <option value="head">Head</option>
-        <option value="other">Other</option>
-      </select>
+      ctx.fillStyle = '#4CAF50';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      <button type="submit">Calculate</button>
-    </form>
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
 
-    <p id="result">Click on the pitch and choose shot type to calculate xG.</p>
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2, 10);
+      ctx.lineTo(canvas.width / 2, canvas.height - 10);
+      ctx.stroke();
 
-    <h2>Shot History</h2>
-    <canvas id="xgChart" width="500" height="300"></canvas>
-  </div>
+      ctx.beginPath();
+      ctx.arc(canvas.width / 2, canvas.height / 2, 60, 0, Math.PI * 2);
+      ctx.stroke();
 
-  <script src="script.js"></script>
+      ctx.strokeRect(canvas.width - 150, canvas.height / 2 - 100, 140, 200);
+      ctx.strokeRect(10, canvas.height / 2 - 100, 140, 200);
+
+      ctx.strokeRect(canvas.width - 170, canvas.height / 2 - 50, 20, 100);
+      ctx.strokeRect(150, canvas.height / 2 - 50, 20, 100);
+    }
+
+    window.onload = () => {
+      drawPitch();
+      // Other initialization code here
+    };
+  </script>
 </body>
 </html>
