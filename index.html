@@ -2,32 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>xG Calculator with Pitch</title>
+  <title>Simple xG Calculator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 700px;
+      max-width: 400px;
       margin: 40px auto;
       padding: 10px;
       background: #f9f9f9;
       color: #333;
     }
-    #pitch {
-      border: 2px solid black;
-      display: block;
-      margin: 20px auto;
-      background-color: #4CAF50;
-      cursor: crosshair;
-    }
     label {
       display: block;
-      margin: 10px 0 5px;
+      margin: 12px 0 6px;
     }
-    input[type="text"], select {
+    input[type="number"], select {
       width: 100%;
       padding: 7px;
-      box-sizing: border-box;
       font-size: 1em;
+      box-sizing: border-box;
     }
     button {
       margin-top: 15px;
@@ -50,17 +43,14 @@
 </head>
 <body>
 
-  <h1>xG Calculator</h1>
-  <p>Click on the pitch to select shot location.</p>
-
-  <canvas id="pitch" width="600" height="400"></canvas>
+  <h1>Simple xG Calculator</h1>
 
   <form id="xgForm">
-    <label for="xPos">X Position:</label>
-    <input type="text" id="xPos" name="xPos" readonly />
+    <label for="xPos">X Position (0-100):</label>
+    <input type="number" id="xPos" name="xPos" min="0" max="100" step="1" required />
 
-    <label for="yPos">Y Position:</label>
-    <input type="text" id="yPos" name="yPos" readonly />
+    <label for="yPos">Y Position (0-100):</label>
+    <input type="number" id="yPos" name="yPos" min="0" max="100" step="1" required />
 
     <label for="shotType">Shot Type:</label>
     <select id="shotType" name="shotType">
@@ -69,110 +59,47 @@
       <option value="other">Other</option>
     </select>
 
-    <button type="submit">Calculate</button>
+    <button type="submit">Calculate xG</button>
   </form>
 
   <div id="result"></div>
 
   <script>
-    // Get canvas and context
-    const canvas = document.getElementById('pitch');
-    const ctx = canvas.getContext('2d');
-
-    // Draw the pitch
-    function drawPitch() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Background green
-      ctx.fillStyle = '#4CAF50';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // White outer lines
-      ctx.strokeStyle = 'white';
-      ctx.lineWidth = 4;
-      ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
-
-      // Halfway line
-      ctx.beginPath();
-      ctx.moveTo(canvas.width / 2, 10);
-      ctx.lineTo(canvas.width / 2, canvas.height - 10);
-      ctx.stroke();
-
-      // Center circle
-      ctx.beginPath();
-      ctx.arc(canvas.width / 2, canvas.height / 2, 60, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Penalty areas
-      ctx.strokeRect(canvas.width - 150, canvas.height / 2 - 100, 140, 200);
-      ctx.strokeRect(10, canvas.height / 2 - 100, 140, 200);
-
-      // Goals
-      ctx.strokeRect(canvas.width - 170, canvas.height / 2 - 50, 20, 100);
-      ctx.strokeRect(150, canvas.height / 2 - 50, 20, 100);
-    }
-
-    // Initialize pitch
-    drawPitch();
-
-    // Handle clicks on pitch to fill X and Y positions
-    canvas.addEventListener('click', function(event) {
-      const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width;
-      const scaleY = canvas.height / rect.height;
-
-      // Calculate mouse position relative to canvas size
-      let x = (event.clientX - rect.left) * scaleX;
-      let y = (event.clientY - rect.top) * scaleY;
-
-      // Round to integer for easier input
-      x = Math.round(x);
-      y = Math.round(y);
-
-      // Fill input fields
-      document.getElementById('xPos').value = x;
-      document.getElementById('yPos').value = y;
-
-      // Optional: draw a small red circle to mark shot position
-      drawPitch();  // Redraw pitch clean
-      ctx.fillStyle = 'red';
-      ctx.beginPath();
-      ctx.arc(x, y, 6, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    // Dummy xG calculator function (replace with your real model)
+    // Dummy xG calculator function (you can replace this)
     function calculateXG(x, y, shotType) {
-      // For example, xG decreases as distance from center of goal increases
-      // Normalize x and y to range 0-1 (pitch size is 600x400)
-      let nx = x / canvas.width;
-      let ny = y / canvas.height;
+      // Simple formula for demonstration:
+      // x and y are from 0-100; closer to (100,50) is better chance
+      
+      // Distance from center of goal line (assumed at x=100, y=50)
+      const dx = 100 - x;
+      const dy = 50 - y;
+      const distance = Math.sqrt(dx*dx + dy*dy);
 
-      // Simple model: xG is higher near center and close to goal (right side)
-      let baseXG = 0.97 * (1 - nx) * (1 - Math.abs(ny - 0.5) * 2);
+      // Base xG score: closer shots have higher chance, max 0.97
+      let baseXG = Math.max(0, 0.97 * (1 - distance / 100));
 
       // Adjust by shot type
-      let typeMultiplier = 1;
-      if (shotType === 'head') typeMultiplier = 0.7;
-      else if (shotType === 'other') typeMultiplier = 0.4;
+      let multiplier = 1;
+      if (shotType === 'head') multiplier = 0.7;
+      else if (shotType === 'other') multiplier = 0.4;
 
-      return (baseXG * typeMultiplier).toFixed(3);
+      return (baseXG * multiplier).toFixed(3);
     }
 
-    // Handle form submission
-    document.getElementById('xgForm').addEventListener('submit', function(event) {
-      event.preventDefault();
+    document.getElementById('xgForm').addEventListener('submit', function(e) {
+      e.preventDefault();
 
-      const x = parseInt(document.getElementById('xPos').value);
-      const y = parseInt(document.getElementById('yPos').value);
+      const x = Number(document.getElementById('xPos').value);
+      const y = Number(document.getElementById('yPos').value);
       const shotType = document.getElementById('shotType').value;
 
-      if (isNaN(x) || isNaN(y)) {
-        alert('Please select a valid shot location by clicking the pitch.');
+      if (x < 0 || x > 100 || y < 0 || y > 100) {
+        alert('Please enter positions between 0 and 100.');
         return;
       }
 
       const xg = calculateXG(x, y, shotType);
+
       document.getElementById('result').textContent = `Estimated xG: ${xg}`;
     });
   </script>
